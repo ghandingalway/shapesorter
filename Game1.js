@@ -154,7 +154,6 @@ var init = function()
 	}
 	for(var i =0; i<Game.length; i++)
 	{
-    Game[i].setAttribute("fill", "black");
 	Game[i].addEventListener("pointermove", pointermovefunction, false);
 	}
 }
