@@ -4,6 +4,8 @@ var init = function()
 	var Gap = [];
 	var GapSvg = document.getElementsByClassName("gaps");
 	var Game = document.getElementsByClassName("draggable");
+	var shapecolour = ["red", "yellow", "blue", "green", "purple", "orange","red", "yellow", "blue", "green", "purple", "orange"];
+	
 	for(var i=0; i<GapSvg.length; i++)
 	{
 		var GapCoords = {};
@@ -24,7 +26,6 @@ var init = function()
 			GapCoords.ytop = Number(GapSvg[i].getAttribute("cy"))-Number(GapSvg[i].getAttribute("r"));
 			GapCoords.ybottom = Number(GapSvg[i].getAttribute("cy"))+Number(GapSvg[i].getAttribute("r"));
 			GapCoords.radius = Number(GapSvg[i].getAttribute("r"))-5;
-			//GapCoords.width = Number(GapSvg[i].getAttribute("r"))+Number(GapSvg[i].getAttribute("r"))-10;
 			Gap.push(GapCoords);
 		}
 		else if(GapSvg[i].getAttribute("rx"))
@@ -35,13 +36,12 @@ var init = function()
 			GapCoords.ybottom = Number(GapSvg[i].getAttribute("cy"))+Number(GapSvg[i].getAttribute("ry"));
 			GapCoords.radiusx = Number(GapSvg[i].getAttribute("rx"))-5;
 			GapCoords.radiusy = Number(GapSvg[i].getAttribute("ry"))-5;
-			//GapCoords.width = Number(GapSvg[i].getAttribute("r"))+Number(GapSvg[i].getAttribute("r"))-10;
 			Gap.push(GapCoords);
 		}
 	}
 	var pointermovefunction = function(e)
 	{
-		if(this.getAttribute("height"))
+		if(this.getAttribute("x"))
 		{
 			this.setAttribute("x", (e.pageX-50));
 			this.setAttribute("y", (e.pageY-50));
@@ -58,7 +58,7 @@ var init = function()
 					this.setAttribute("x", (Gap[i].xtop+15));
 					this.setAttribute("y", (Gap[i].ytop+15));
 			 		this.fadechange = 1;
-          this.removeEventListener("pointermove", pointermovefunction);
+					this.removeEventListener("pointermove", pointermovefunction);
 					var self = this;
 					var fadeout= function()
 					{
@@ -88,14 +88,13 @@ var init = function()
 					&& (Number(this.getAttribute("cy"))>=Gap[i].ytop)
 					&& (Number(this.getAttribute("cy"))<=Gap[i].ybottom)
 					&& (Number(this.getAttribute("r"))===Gap[i].radius))
-					//&& (Number(this.getAttribute("width"))===Gap[i].width))
 				{
 					audiofile.play();
 					this.setAttribute("cx", Gap[i].xtop+Gap[i].radius+5);
 					this.setAttribute("cy", Gap[i].ytop+Gap[i].radius+5);
 			 		this.fadechange = 1;
+					this.removeEventListener("pointermove", pointermovefunction);
 					var self = this;
-          self.removeEventListener("pointermove", pointermovefunction);
 					var fadeout= function()
 					{
 						if (self.fadechange <= 0)
@@ -125,14 +124,13 @@ var init = function()
 					&& (Number(this.getAttribute("cy"))>=Gap[i].ytop)
 					&& (Number(this.getAttribute("cy"))<=Gap[i].ybottom)
 					&& (Number(this.getAttribute("rx"))===Gap[i].radiusx))
-					//&& (Number(this.getAttribute("width"))===Gap[i].width))
 				{
 					audiofile.play();
 					this.setAttribute("cx", Gap[i].xtop+Gap[i].radiusx+5);
 					this.setAttribute("cy", Gap[i].ytop+Gap[i].radiusy+5);
 			 		this.fadechange = 1;
+					this.removeEventListener("pointermove", pointermovefunction)
 					var self = this;
-          self.removeEventListener("pointermove", pointermovefunction)
 					var fadeout= function()
 					{
 						if (self.fadechange <= 0)
@@ -154,6 +152,10 @@ var init = function()
 	}
 	for(var i =0; i<Game.length; i++)
 	{
-	Game[i].addEventListener("pointermove", pointermovefunction, false);
+		Game[i].addEventListener("pointermove", pointermovefunction, false);
+		var colourchooser = (Math.floor(Math.random()*shapecolour.length));
+		Game[i].setAttribute("fill", shapecolour[colourchooser]);
+		Game[i].setAttribute("stroke", shapecolour[colourchooser]);
+		shapecolour.splice(colourchooser, 1);
 	}
 }
