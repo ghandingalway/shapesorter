@@ -1,4 +1,7 @@
 var init = function()
+(function()
+{
+var init = function()
 {
 	var audiofile = document.getElementById("applause");
 	var Gap = [];
@@ -159,3 +162,101 @@ var init = function()
 		shapecolour.splice(colourchooser, 1);
 	}
 }
+var sums = function()
+{
+	var Game = document.getElementsByClassName("draggable");
+	var xchooser ;
+	var ychooser;
+	var locationrandom = function()
+	{
+		xchooser = (Math.floor(Math.random()*800))
+		ychooser = (Math.floor(Math.random()*700));
+	}
+	var settoorigin = function()
+	{
+		for(var i=0; i<Game.length; i++)
+		{
+			if(Game[i].getAttribute("x"))
+			{
+			Game[i].setAttribute("x", 0);
+			Game[i].setAttribute("y", 0);
+			}
+			else if(Game[i].getAttribute("cx"))
+			{
+			Game[i].setAttribute("cx", 0);
+			Game[i].setAttribute("cy", 0);	
+			}
+		}
+	}
+	var getdimensions = function()
+	{
+		for(var i=0; i<Game.length; i++)
+		{
+			var margin = 100;
+			if(Game[i].getAttribute("x"))
+			{
+			Game[i].xmin = Number(Game[i].getAttribute("x"))-margin;
+			Game[i].xmax = Number(Game[i].getAttribute("x"))+Number(Game[i].getAttribute("width"))+margin;
+			Game[i].ymin = Number(Game[i].getAttribute("y"))-margin;
+			Game[i].ymax = Number(Game[i].getAttribute("y"))+Number(Game[i].getAttribute("height"))+margin;
+			}
+			else if(Game[i].getAttribute("r"))
+			{
+			Game[i].xmin = Number(Game[i].getAttribute("cx"))-Number(Game[i].getAttribute("r"))-margin;
+			Game[i].xmax = Number(Game[i].getAttribute("cx"))+Number(Game[i].getAttribute("r"))+margin;
+			Game[i].ymin = Number(Game[i].getAttribute("cy"))-Number(Game[i].getAttribute("r"))+margin;
+			Game[i].ymax = Number(Game[i].getAttribute("cy"))+Number(Game[i].getAttribute("r"))+margin;	
+			}
+			else if(Game[i].getAttribute("rx"))
+			{
+			Game[i].xmin = Number(Game[i].getAttribute("cx"))-Number(Game[i].getAttribute("rx"))-margin;
+			Game[i].xmax = Number(Game[i].getAttribute("cx"))+Number(Game[i].getAttribute("rx"))+margin;
+			Game[i].ymin = Number(Game[i].getAttribute("cy"))-Number(Game[i].getAttribute("ry"))+margin;
+			Game[i].ymax = Number(Game[i].getAttribute("cy"))+Number(Game[i].getAttribute("ry"))+margin;
+			}
+		}
+	}
+	var movetorandom = function()
+	{
+		for(var i=0; i<Game.length; i++)
+		{
+			if(Game[i].xmin <= 1)
+			{
+				locationrandom();
+				if(Game[i].getAttribute("x"))
+				{
+					Game[i].setAttribute("x", xchooser);
+					Game[i].setAttribute("y", ychooser);	
+					for(var k=i+1; k<Game.length; k++)
+					{
+						if(Game[i].xmin<Game[k].xmax && Game[i].xmin>Game[k].xmin && Game[i].ymin<Game[k].ymax && Game[i].ymin>Game[k].ymin)
+						{
+							Game[i].setAttribute("x", 0);
+							Game[i].setAttribute("y", 0);
+						}
+					}
+				}
+				else if(Game[i].getAttribute("cx"))
+				{
+					Game[i].setAttribute("cx", xchooser);
+					Game[i].setAttribute("cy", ychooser);	
+					for(var k=i+1; k<Game.length; k++)
+					{
+						if(Game[i].xmin<Game[k].xmax && Game[i].xmin>Game[k].xmin && Game[i].ymin<Game[k].ymax && Game[i].ymin>Game[k].ymin)
+						{
+							Game[i].setAttribute("cx", 0);
+							Game[i].setAttribute("cy", 0);
+						}
+					}
+				}
+			}
+		}
+		movetorandom();
+	}
+	settoorigin();
+	getdimensions();
+	movetorandom();
+}
+window.init = init;
+window.sums = sums;
+})();
