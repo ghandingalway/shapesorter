@@ -1,4 +1,3 @@
-var init = function()
 (function()
 {
 var init = function()
@@ -172,90 +171,78 @@ var sums = function()
 		xchooser = (Math.floor(Math.random()*800))
 		ychooser = (Math.floor(Math.random()*700));
 	}
-	var settoorigin = function()
+	var settoorigin = function(image)
 	{
-		for(var i=0; i<Game.length; i++)
+		if(image.getAttribute("x"))
 		{
-			if(Game[i].getAttribute("x"))
-			{
-			Game[i].setAttribute("x", 0);
-			Game[i].setAttribute("y", 0);
-			}
-			else if(Game[i].getAttribute("cx"))
-			{
-			Game[i].setAttribute("cx", 0);
-			Game[i].setAttribute("cy", 0);	
-			}
+		image.setAttribute("x", 0);
+		image.setAttribute("y", 0);
 		}
-	}
-	var getdimensions = function()
-	{
-		for(var i=0; i<Game.length; i++)
+		else if(image.getAttribute("cx"))
 		{
-			var margin = 100;
-			if(Game[i].getAttribute("x"))
-			{
-			Game[i].xmin = Number(Game[i].getAttribute("x"))-margin;
-			Game[i].xmax = Number(Game[i].getAttribute("x"))+Number(Game[i].getAttribute("width"))+margin;
-			Game[i].ymin = Number(Game[i].getAttribute("y"))-margin;
-			Game[i].ymax = Number(Game[i].getAttribute("y"))+Number(Game[i].getAttribute("height"))+margin;
-			}
-			else if(Game[i].getAttribute("r"))
-			{
-			Game[i].xmin = Number(Game[i].getAttribute("cx"))-Number(Game[i].getAttribute("r"))-margin;
-			Game[i].xmax = Number(Game[i].getAttribute("cx"))+Number(Game[i].getAttribute("r"))+margin;
-			Game[i].ymin = Number(Game[i].getAttribute("cy"))-Number(Game[i].getAttribute("r"))+margin;
-			Game[i].ymax = Number(Game[i].getAttribute("cy"))+Number(Game[i].getAttribute("r"))+margin;	
-			}
-			else if(Game[i].getAttribute("rx"))
-			{
-			Game[i].xmin = Number(Game[i].getAttribute("cx"))-Number(Game[i].getAttribute("rx"))-margin;
-			Game[i].xmax = Number(Game[i].getAttribute("cx"))+Number(Game[i].getAttribute("rx"))+margin;
-			Game[i].ymin = Number(Game[i].getAttribute("cy"))-Number(Game[i].getAttribute("ry"))+margin;
-			Game[i].ymax = Number(Game[i].getAttribute("cy"))+Number(Game[i].getAttribute("ry"))+margin;
-			}
+		image.setAttribute("cx", 0);
+		image.setAttribute("cy", 0);	
+		}	
+	}
+	var getdimensions = function(image)
+	{
+		var margin = 50;
+		if(image.getAttribute("x"))
+		{
+		image.xmin = Number(image.getAttribute("x"))-margin;
+		image.xmax = Number(image.getAttribute("x"))+Number(image.getAttribute("width"))+margin;
+		image.ymin = Number(image.getAttribute("y"))-margin;
+		image.ymax = Number(image.getAttribute("y"))+Number(image.getAttribute("height"))+margin;
+		}
+		else if(image.getAttribute("r"))
+		{
+		image.xmin = Number(image.getAttribute("cx"))-Number(image.getAttribute("r"))-margin;
+		image.xmax = Number(image.getAttribute("cx"))+Number(image.getAttribute("r"))+margin;
+		image.ymin = Number(image.getAttribute("cy"))-Number(image.getAttribute("r"))+margin;
+		image.ymax = Number(image.getAttribute("cy"))+Number(image.getAttribute("r"))+margin;	
+		}
+		else if(image.getAttribute("rx"))
+		{
+		image.xmin = Number(image.getAttribute("cx"))-Number(image.getAttribute("rx"))-margin;
+		image.xmax = Number(image.getAttribute("cx"))+Number(image.getAttribute("rx"))+margin;
+		image.ymin = Number(image.getAttribute("cy"))-Number(image.getAttribute("ry"))+margin;
+		image.ymax = Number(image.getAttribute("cy"))+Number(image.getAttribute("ry"))+margin;
 		}
 	}
 	var movetorandom = function()
 	{
+		var counter = false;
 		for(var i=0; i<Game.length; i++)
-		{
-			if(Game[i].xmin <= 1)
+		{		
+			locationrandom();
+			if(Game[i].getAttribute("x"))
+			{	
+				Game[i].setAttribute("x", xchooser);
+				Game[i].setAttribute("y", ychooser);
+			}
+			else if(Game[i].getAttribute("cx"))
 			{
-				locationrandom();
-				if(Game[i].getAttribute("x"))
+				Game[i].setAttribute("cx", xchooser);
+				Game[i].setAttribute("cy", ychooser);
+			}
+			for(var k=0; k<i; k++)
+			{
+				getdimensions(Game[i]);
+				getdimensions(Game[k]);
+				if((Game[i].xmin<=Game[k].xmin && Game[i].xmax>=Game[k].xmin && Game[i].ymin<=Game[k].ymin && Game[i].ymax>=Game[k].ymin)
+					||(Game[i].xmax >= Game[k].xmax && Game[i].xmin<= Game[k].xmax && Game[i].ymax >=Game[k].ymax && Game[i].ymin <= Game[k].ymax))
 				{
-					Game[i].setAttribute("x", xchooser);
-					Game[i].setAttribute("y", ychooser);	
-					for(var k=i+1; k<Game.length; k++)
-					{
-						if(Game[i].xmin<Game[k].xmax && Game[i].xmin>Game[k].xmin && Game[i].ymin<Game[k].ymax && Game[i].ymin>Game[k].ymin)
-						{
-							Game[i].setAttribute("x", 0);
-							Game[i].setAttribute("y", 0);
-						}
-					}
-				}
-				else if(Game[i].getAttribute("cx"))
-				{
-					Game[i].setAttribute("cx", xchooser);
-					Game[i].setAttribute("cy", ychooser);	
-					for(var k=i+1; k<Game.length; k++)
-					{
-						if(Game[i].xmin<Game[k].xmax && Game[i].xmin>Game[k].xmin && Game[i].ymin<Game[k].ymax && Game[i].ymin>Game[k].ymin)
-						{
-							Game[i].setAttribute("cx", 0);
-							Game[i].setAttribute("cy", 0);
-						}
-					}
+					settoorigin(Game[i]);
+					i = i-1;
 				}
 			}
-		}
-		movetorandom();
+		}		
 	}
-	settoorigin();
-	getdimensions();
-	movetorandom();
+	for(var i=0; i<Game.length; i++)
+	{
+		settoorigin(Game[i]);
+	}
+	movetorandom();	
 }
 window.init = init;
 window.sums = sums;
