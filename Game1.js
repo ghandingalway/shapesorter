@@ -7,7 +7,11 @@ var init = function()
 	var GapSvg = document.getElementsByClassName("gaps");
 	var Game = document.getElementsByClassName("draggable");
 	var shapecolour = ["red", "yellow", "blue", "green", "purple", "orange","red", "yellow", "blue", "green", "purple", "orange"];
-	
+	var reloader = function()
+	{
+		if(Game.length == 0)
+		{location.reload();}
+	}
 	for(var i=0; i<GapSvg.length; i++)
 	{
 		var GapCoords = {};
@@ -69,7 +73,7 @@ var init = function()
 							cancelAnimationFrame(requestAnimationFrameID);
 							var parent = self.parentNode;
 							parent.removeChild(self);
-							return;
+							reloader();
 						}
 						self.setAttribute("opacity", self.fadechange);
 						self.fadechange -= 0.01;
@@ -104,7 +108,7 @@ var init = function()
 							cancelAnimationFrame(requestAnimationFrameID);
 							var parent = self.parentNode;
 							parent.removeChild(self);
-							return;
+							reloader();
 						}
 						self.setAttribute("opacity", self.fadechange);
 						self.fadechange -= 0.01;
@@ -133,6 +137,7 @@ var init = function()
 			 		this.fadechange = 1;
 					this.removeEventListener("pointermove", pointermovefunction)
 					var self = this;
+					
 					var fadeout= function()
 					{
 						if (self.fadechange <= 0)
@@ -140,13 +145,13 @@ var init = function()
 							cancelAnimationFrame(requestAnimationFrameID);
 							var parent = self.parentNode;
 							parent.removeChild(self);
-							return;
+							reloader();
 						}
 						self.setAttribute("opacity", self.fadechange);
 						self.fadechange -= 0.01;
 						requestAnimationFrameID = requestAnimationFrame(fadeout);
 					}
-					var requestAnimationFrameID = requestAnimationFrame(fadeout);
+					var requestAnimationFrameID = requestAnimationFrame(fadeout);	
 				}
 			}
 			
@@ -186,7 +191,7 @@ var sums = function()
 	}
 	var getdimensions = function(image)
 	{
-		var margin = 50;
+		var margin = 10;
 		if(image.getAttribute("x"))
 		{
 		image.xmin = Number(image.getAttribute("x"))-margin;
@@ -211,7 +216,6 @@ var sums = function()
 	}
 	var movetorandom = function()
 	{
-		var counter = false;
 		for(var i=0; i<Game.length; i++)
 		{		
 			locationrandom();
@@ -225,15 +229,23 @@ var sums = function()
 				Game[i].setAttribute("cx", xchooser);
 				Game[i].setAttribute("cy", ychooser);
 			}
-			for(var k=0; k<i; k++)
+			for(var k=0; k<Game.length; k++)
+				if(k==i)
+				{
+					continue;
+				}
+				else
 			{
 				getdimensions(Game[i]);
 				getdimensions(Game[k]);
-				if((Game[i].xmin<=Game[k].xmin && Game[i].xmax>=Game[k].xmin && Game[i].ymin<=Game[k].ymin && Game[i].ymax>=Game[k].ymin)
-					||(Game[i].xmax >= Game[k].xmax && Game[i].xmin<= Game[k].xmax && Game[i].ymax >=Game[k].ymax && Game[i].ymin <= Game[k].ymax))
+				if((((Game[i].xmin<=Game[k].xmin) && (Game[i].xmax>=Game[k].xmin)) 
+				||((Game[i].xmin<=Game[k].xmax)&&(Game[i].xmax>=Game[k].xmax))) 
+				&&(((Game[i].ymin<=Game[k].ymin) && (Game[i].ymax>=Game[k].ymin))
+				||((Game[i].ymin <=Game[k].ymax)&&(Game[i].ymax>=Game[k].ymax))))
 				{
 					settoorigin(Game[i]);
 					i = i-1;
+					k = Game.length-1;
 				}
 			}
 		}		
